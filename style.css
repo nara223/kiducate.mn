@@ -101,3 +101,30 @@ footer {
     padding: 15px 0;
     margin-top: 30px;
 }
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 40px 20px;
+}
+
+.card {
+  text-decoration: none;
+  color: #333;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+/* Картын өнгөнүүд */
+.kids-card { background-color: #FFD93D; } /* Шар */
+.teachers-card { background-color: #6BCB77; } /* Ногоон */
+.parents-card { background-color: #4D96FF; } /* Цэнхэр */
+
+.icon { font-size: 50px; margin-bottom: 10px; }
