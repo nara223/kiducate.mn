@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>2-р анги - Ишигний тоглоомууд</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .games-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding: 20px; }
+        .game-item { 
+            background: #fffbe6; border: 2px dashed #ff9800; border-radius: 15px; 
+            padding: 15px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .game-item:hover { background: #fff3e0; transform: translateY(-5px); }
+        .animal-banner { text-align: center; background: #e3f2fd; padding: 20px; border-radius: 20px; margin: 20px; }
+        .animal-banner img { width: 150px; }
+    </style>
+</head>
+<body>
+    <div class="animal-banner">
+        <img src="images/kid.png" alt="Ишиг">
+        <h1>Сэргэлэн ишигний математикийн аялал</h1>
+        <p>2-р ангийнханд зориулсан 30 сонирхолтой тоглоом</p>
+    </div>
 
+    <div class="games-list" id="games-container">
+        </div>
+
+    <script>
+        const games = [
+            { id: 1, name: "Ишигний хүрд - 2", desc: "2-ын хүрд цээжлэх" },
+            { id: 2, name: "Хувин дүүрэн сүү", desc: "100 дотор нэмэх" },
+            { id: 3, name: "Ижил төлүүдийг ол", desc: "Үржвэрийг ижил тоогоор илэрхийлэх" },
+            { id: 4, name: "Аргал түүх уралдаан", desc: "100 дотор хасах" },
+            { id: 5, name: "Мөнгөн аяганы таавар", desc: "Үл мэдэгдэх тоог олох" }
+            // Энд 50 хүртэл тоглоом нэмэгдэнэ
+        ];
+
+        const container = document.getElementById('games-container');
+        games.forEach(game => {
+            const div = document.createElement('div');
+            div.className = 'game-item';
+            div.innerHTML = `<h3>${game.id}. ${game.name}</h3><p>${game.desc}</p>`;
+            div.onclick = () => location.href = `game2-${game.id}.html`;
+            container.appendChild(div);
+        });
+    </script>
+</body>
+</html>
