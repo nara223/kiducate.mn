@@ -2,34 +2,57 @@
 <html lang="mn">
 <head>
     <meta charset="UTF-8">
-    <title>5-ын хүрд - Солонгон ишиг</title>
+    <title>5-ын хүрд - Бэлчээр</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f1f8e9; text-align: center; margin: 0; }
-        .nav-menu { position: fixed; top: 10px; left: 10px; display: flex; gap: 10px; z-index: 1000; }
-        .nav-btn { background: white; border: 2px solid #ff9800; border-radius: 30px; padding: 5px 15px; cursor: pointer; display: flex; align-items: center; font-weight: bold; }
+        body { margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; background: #87CEEB; }
         
-        .game-layout { display: flex; justify-content: center; gap: 40px; padding: 20px; margin-top: 60px; }
+        /* Зүлэг */
+        .meadow { position: relative; width: 100vw; height: 100vh; background: #7cfc00; border-top: 100px solid #87CEEB; }
         
-        /* Хашаа */
-        .fence-area { 
-            width: 550px; background: #aed581; border: 10px solid #5d4037; 
-            border-radius: 25px; min-height: 450px; padding: 15px; display: flex; flex-wrap: wrap; align-content: flex-start;
+        /* Хашаа - Зүүн доод буланд */
+        .fence { 
+            position: absolute; bottom: 40px; left: 40px; width: 450px; height: 320px;
+            border: 12px solid #5d4037; border-radius: 20px; background: #9ccc65;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.2); z-index: 2;
         }
-        .ishig-group { 
-            width: 100px; height: 80px; margin: 5px; border-radius: 10px; 
-            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; background: rgba(255,255,255,0.2);
+
+        /* Баруун талын босоо удирдлага */
+        .side-controls {
+            position: fixed; right: 30px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 20px; z-index: 100;
         }
-        .ishig-img { width: 30px; height: 30px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2)); }
 
-        /* Хүрдний самбар */
-        .board { width: 300px; background: #333; color: #fff; border-radius: 15px; padding: 20px; border: 8px solid #795548; box-shadow: 10px 10px 0px #5d4037; }
-        .line { font-family: 'Courier New', monospace; font-size: 28px; margin: 10px 0; text-align: left; opacity: 0.2; transition: 0.4s; }
-        .line.active { opacity: 1; color: #ffeb3b; transform: translateX(10px); }
+        .circle-btn {
+            width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff;
+            cursor: pointer; font-weight: bold; font-size: 16px; color: white;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3); transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .btn-add { background: #ef6c00; }
+        .btn-reset { background: #795548; }
+        .circle-btn:hover { transform: scale(1.1); }
+        .circle-btn:disabled { background: #bdbdbd; cursor: not-allowed; }
 
-        .controls { margin-top: 30px; }
-        .btn-add { padding: 15px 45px; font-size: 22px; cursor: pointer; background: #ef6c00; color: white; border: none; border-radius: 50px; box-shadow: 0 5px #e65100; }
-        .btn-add:active { box-shadow: none; transform: translateY(4px); }
+        /* Ишгүүд */
+        .ishig-group-wild {
+            position: absolute; transition: all 0.8s ease-in-out;
+            display: grid; grid-template-columns: repeat(3, 30px); gap: 5px;
+            padding: 10px; z-index: 5;
+        }
+        .ishig-img { width: 35px; height: 35px; object-fit: contain; }
+
+        /* Хар самбар */
+        .chalkboard {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #2c3e50; color: white; padding: 15px 40px;
+            border: 5px solid #795548; border-radius: 10px; font-size: 32px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 10;
+        }
+
+        /* Цэсний товчлуур */
+        .nav-menu { position: fixed; top: 20px; left: 20px; display: flex; gap: 10px; z-index: 1000; }
+        .nav-btn { background: white; border: 2px solid #ff9800; border-radius: 30px; padding: 8px 15px; cursor: pointer; display: flex; align-items: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -38,77 +61,26 @@
     <button class="nav-btn" onclick="location.href='kids.html'">👧 Хүүхэд</button>
     <button class="nav-btn" onclick="location.href='math-levels.html'">🏫 Анги</button>
 </div>
-
-<h1>🌈 5-ын хүрд: Өнгөт ишигнүүд</h1>
-
-<div class="game-layout">
-    <div class="fence-area" id="fence"></div>
-
-    <div class="board" id="math-board">
-        </div>
+<div class="chalkboard" id="board">
+    <span id="formula">0 x 5 = 0</span>
 </div>
 
-<div class="controls">
-    <button class="btn-add" id="add-btn" onclick="nextStep()">+ 5 ишиг оруулах</button>
-    <button onclick="location.reload()" style="margin-left:10px; cursor:pointer; padding:10px; border-radius:10px;">Шинээр эхлэх</button>
+<div class="meadow" id="meadow">
+    <div class="fence" id="fence-target"></div>
+</div>
+
+<div class="side-controls">
+    <button class="circle-btn btn-add" id="add-btn" onclick="nextStep()">Ишиг <br>Оруулах</button>
+    <button class="circle-btn btn-reset" onclick="location.reload()">Дахин <br>Эхлэх</button>
 </div>
 
 <script>
     let currentStep = 0;
-    const colors = [
-        'hue-rotate(0deg)',     // Улаан/Хэвээрээ
-        'hue-rotate(45deg)',    // Улбар шар
-        'hue-rotate(90deg)',    // Шар
-        'hue-rotate(150deg)',   // Ногоон
-        'hue-rotate(200deg)',   // Цэнхэр
-        'hue-rotate(260deg)',   // Хөх
-        'hue-rotate(300deg)',   // Ягаан
-        'hue-rotate(20deg) brightness(1.2)', // Гэгээн
-        'hue-rotate(180deg) saturate(2)',    // Хурц ногоон
-        'hue-rotate(330deg) contrast(1.5)'   // Улаан ягаан
-    ];
+    const meadow = document.getElementById('meadow');
+    const fence = document.getElementById('fence-target');
+    const board = document.getElementById('formula');
+    const addBtn = document.getElementById('add-btn');
 
-    function initBoard() {
-        const board = document.getElementById('math-board');
-        for (let i = 1; i <= 10; i++) {
-            const div = document.createElement('div');
-            div.id = `line-${i}`;
-            div.className = 'line';
-            div.innerText = `${i} x 5 = ${i * 5}`;
-            board.appendChild(div);
-        }
-    }
-
-    function nextStep() {
-        if (currentStep < 10) {
-            currentStep++;
-            
-            // 1. Хүрдийг идэвхжүүлэх
-            document.getElementById(`line-${currentStep}`).className = 'line active';
-
-            // 2. Хашаанд тухайн алхмын өнгөтэй 5 ишиг нэмэх
-            const fence = document.getElementById('fence');
-            const group = document.createElement('div');
-            group.className = 'ishig-group';
-            
-            for (let j = 0; j < 5; j++) {
-                const img = document.createElement('img');
-                img.src = 'images/kid.png';
-                img.className = 'ishig-img';
-                img.style.filter = colors[currentStep - 1]; // Багц бүр өөр өнгө
-                group.appendChild(img);
-            }
-            fence.appendChild(group);
-
-            if (currentStep === 10) {
-                document.getElementById('add-btn').disabled = true;
-                document.getElementById('add-btn').innerText = "Дууслаа!";
-            }
-        }
-    }
-
-    initBoard();
-</script>
-
-</body>
-</html>
+    // Бэлчээрт байгаа 10 багц ишиг үүсгэх
+    function initWildIshig() {
+        for (let i = 1; i <= 10; i++)
