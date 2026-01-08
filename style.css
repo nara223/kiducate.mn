@@ -227,3 +227,23 @@ footer {
 }
 
 .blog-post { border-top-color: #4D96FF; }
+.animal-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+.animal-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+    width: 150px;
+    transition: 0.3s;
+}
+.animal-card:hover { transform: scale(1.05); }
+.animal-card img { width: 100px; height: auto; }
+.animal-card p { font-weight: bold; margin-top: 10px; }
