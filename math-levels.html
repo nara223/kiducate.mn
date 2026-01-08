@@ -1,30 +1,37 @@
-<div class="mongol-math-container">
-    <h2>Аль ангийн даалгавраа хийх вэ?</h2>
-    
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>Анги сонгох</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .animal-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 40px; }
+        .animal-card { 
+            background: #fff; border: 4px solid #4CAF50; border-radius: 25px; 
+            padding: 20px; text-align: center; cursor: pointer; width: 180px; 
+            transition: transform 0.3s; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .animal-card:hover { transform: translateY(-10px); background: #f0fff0; }
+        .animal-card img { width: 120px; height: 120px; object-fit: contain; }
+        .animal-card p { font-size: 20px; font-weight: bold; color: #333; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div style="text-align:center; padding: 30px;">
+        <h1>Малын төлүүдээр математикаа сурцгаая!</h1>
+    </div>
+
     <div class="animal-grid">
         <div class="animal-card" onclick="location.href='grade1.html'">
-            <img src="images/lamb.png" alt="1-р анги Хурга">
-            <div class="label">1-р анги</div>
+            <img src="images/lamb.png" alt="Хурга">
+            <p>1-р анги (Хурга)</p>
         </div>
 
         <div class="animal-card" onclick="location.href='grade2.html'">
-            <img src="images/kid.png" alt="2-р анги Ишиг">
-            <div class="label">2-р анги</div>
+            <img src="images/kid.png" alt="Ишиг">
+            <p>2-р анги (Ишиг)</p>
         </div>
 
-        <div class="animal-card" onclick="location.href='grade3.html'">
-            <img src="images/calf.png" alt="3-р анги Тугал">
-            <div class="label">3-р анги</div>
         </div>
-
-        <div class="animal-card" onclick="location.href='grade4.html'">
-            <img src="images/foal.png" alt="4-р анги Унага">
-            <div class="label">4-р анги</div>
-        </div>
-
-        <div class="animal-card" onclick="location.href='grade5.html'">
-            <img src="images/calf-camel.png" alt="5-р анги Ботго">
-            <div class="label">5-р анги</div>
-        </div>
-    </div>
-</div>
+</body>
+</html>
