@@ -247,3 +247,37 @@ footer {
 .animal-card:hover { transform: scale(1.05); }
 .animal-card img { width: 100px; height: auto; }
 .animal-card p { font-weight: bold; margin-top: 10px; }
+.nav-menu {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    gap: 15px;
+    z-index: 9999;
+}
+
+.nav-btn {
+    background: white;
+    border: 3px solid #ff9800;
+    border-radius: 50%; /* Дугуй товчлуур */
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    padding: 5px;
+}
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    background: #fff3e0;
+}
+
+.nav-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Зургийг товчлуур дотор багтаана */
+}
