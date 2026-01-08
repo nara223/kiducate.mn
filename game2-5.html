@@ -12,7 +12,7 @@
         
         /* Хашаа - гол хэсэгт */
         .fence { 
-            position: absolute; bottom: 40px; left: 40px; width: 450px; height: 320px;
+            position: absolute; top: 50px; left: 50px; transform: translate(-50%, -50%); width: 450px; height: 320px;
             border: 12px solid #5d4037; border-radius: 20px; background: #9ccc65;
             box-shadow: inset 0 0 50px rgba(0,0,0,0.2); z-index: 2;
         }
@@ -109,11 +109,12 @@
             currentStep++;
             const group = document.getElementById(`group-${currentStep}`);
             
-            // Хашаа руу нүүх
+            // Хашааны байршлыг авах
             const fenceRect = fence.getBoundingClientRect();
             const row = Math.floor((currentStep - 1) / 3);
             const col = (currentStep - 1) % 3;
-            
+
+            // Хашаан доторх байршлыг тооцох (хашааны зүүн дээд булангаас хамааралтай)
             group.style.left = (fenceRect.left + 30 + col * 130) + "px";
             group.style.top = (fenceRect.top + 30 + row * 85) + "px";
             group.style.right = "auto"; // Right утгыг цуцлах
