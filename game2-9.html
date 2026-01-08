@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>9-ийн хүрдний нууц</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdf2e9; text-align: center; }
+        .logic-card { background: white; max-width: 500px; margin: 40px auto; padding: 30px; border-radius: 25px; border: 4px solid #e67e22; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .step { font-size: 24px; margin: 20px 0; color: #d35400; padding: 10px; background: #fff5eb; border-radius: 10px; }
+        .input-box { font-size: 24px; width: 60px; text-align: center; border: 2px solid #e67e22; border-radius: 8px; }
+        .btn-check { background: #27ae60; color: white; border: none; padding: 10px 25px; border-radius: 10px; cursor: pointer; font-size: 18px; }
+        .success-msg { color: #27ae60; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="logic-card">
+    <h2>9-ийн хүрдийг ухаалгаар бодъё! 💡</h2>
+    <p>9-өөр үржүүлэх гэдэг нь 10-аар үржүүлээд, уг тоог хасахтай ижил.</p>
+    
+    <div id="problem-area">
+        <h1 id="main-q">9 x 7 = ?</h1>
+        
+        <div class="step">
+            1️⃣ Алхам: 10 x 7 = <input type="number" id="step1" class="input-box">
+        </div>
+        
+        <div class="step">
+            2️⃣ Алхам: <span id="val1">70</span> - 7 = <input type="number" id="step2" class="input-box">
+        </div>
+        
+        <button class="btn-check" onclick="checkLogic()">Шалгах</button>
+        <p id="feedback" class="success-msg">Маш зөв! 9 x 7 бол үнэхээр 63 юм байна! 🎉</p>
+    </div>
+    
+    <button style="margin-top: 20px;" onclick="newProblem()">Дараагийн бодлого</button>
+</div>
+
+<script>
+    let currentNum;
+
+    function newProblem() {
+        currentNum = Math.floor(Math.random() * 8) + 2; // 2-9 хооронд
+        document.getElementById('main-q').innerText = `9 x ${currentNum} = ?`;
+        document.getElementById('step1').value = '';
+        document.getElementById('step2').value = '';
+        document.getElementById('val1').innerText = "???";
+        document.getElementById('feedback').style.display = 'none';
+    }
+
+    function checkLogic() {
+        let s1 = document.getElementById('step1').value;
+        let s2 = document.getElementById('step2').value;
+        
+        if(s1 == currentNum * 10) {
+            document.getElementById('val1').innerText = s1;
+            if(s2 == currentNum * 9) {
+                document.getElementById('feedback').innerText = `Маш зөв! 9 x ${currentNum} бол үнэхээр ${s2} юм байна! 🎉`;
+                document.getElementById('feedback').style.display = 'block';
+            } else {
+                alert("Хасах үйлдэл дээрээ анхаараарай!");
+            }
+        } else {
+            alert("10-аар үржүүлэх хэсгээ дахин хараарай.");
+        }
+    }
+
+    newProblem();
+</script>
+
+</body>
+</html>
