@@ -102,27 +102,39 @@
         <button class="btn" onclick="nextNum()">Дараагийн тоо</button>
     </div>
 
-    <script>
-        const numElem = document.getElementById('num');
-        const zeroElem = document.getElementById('zero');
-        const answerElem = document.getElementById('answer');
-        let currentNum = 5;
+   <script>
+    const numElem = document.getElementById('num');
+    const zeroElem = document.getElementById('zero');
+    const answerElem = document.getElementById('answer');
+    const questionMarkElem = document.querySelector('.result-area').childNodes[0]; // "?" бичвэрийг олох
+    
+    let currentNum = 6; // Эхний тоог 6 гэж тохирууллаа
 
-        // 0-ийг дарахад эсвэл чирэхэд үйлдэл хийх
-        zeroElem.onclick = function() {
-            let result = currentNum * 10;
-            numElem.innerText = result; // 0 залгагдаж буй мэт харагдуулна
-            answerElem.innerText = result;
-            zeroElem.style.display = 'none'; // 0 нь тоондоо "шингэчихэж" байгаа мэт
-            alert("Ид шид! " + currentNum + " тоо 10 дахин томорч " + result + " боллоо!");
-        };
+    function updateQuestionText() {
+        // Доорх мөр нь "? x 10" хэсгийг "6 x 10" болгож харуулна
+        document.getElementById('result-text').innerHTML = 
+            `<span style="color: #D32F2F;">${currentNum}</span> x 10 = <span id="answer">...</span>`;
+    }
 
-        function nextNum() {
-            currentNum = Math.floor(Math.random() * 9) + 1;
-            numElem.innerText = currentNum;
-            answerElem.innerText = "...";
-            zeroElem.style.display = 'inline-block';
-        }
-    </script>
+    // 0-ийг дарахад ид шид үзүүлнэ
+    zeroElem.onclick = function() {
+        let result = currentNum * 10;
+        numElem.innerText = result; 
+        document.getElementById('answer').innerText = result;
+        zeroElem.style.display = 'none'; 
+        alert("Ид шид! " + currentNum + " тоо 10 дахин ихсэж " + result + " боллоо!");
+    };
+
+    function nextNum() {
+        currentNum = Math.floor(Math.random() * 9) + 1; // Санамсаргүй 1-10 тоо
+        numElem.innerText = currentNum;
+        zeroElem.style.display = 'inline-block';
+        updateQuestionText(); // Асуултын тэмдгийг шинэ тоогоор солих функц
+    }
+
+    // Хуудас ачаалагдахад анхны тоог харуулах
+    updateQuestionText();
+</script>
+  
 </body>
 </html>
