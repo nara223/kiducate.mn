@@ -247,6 +247,7 @@ footer {
 .animal-card:hover { transform: scale(1.05); }
 .animal-card img { width: 100px; height: auto; }
 .animal-card p { font-weight: bold; margin-top: 10px; }
+/* Зүүн дээд булангийн цэс */
 .nav-menu {
     position: fixed;
     top: 15px;
