@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <title>0 нэмэх ид шид</title>
+    <style>
+        /* Орчныг бүрдүүлэх CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 70%, #4CAF50 70%, #2E7D32 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Мандаж буй нар */
+        .sun {
+            position: absolute;
+            bottom: 35%; /* Зүлэгний цаанаас мандаж буй мэт */
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 50px #FFA500;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 10;
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 500px;
+        }
+
+        .magic-number {
+            font-size: 80px;
+            font-weight: bold;
+            color: #D32F2F;
+            display: inline-block;
+        }
+
+        .magic-zero {
+            font-size: 80px;
+            font-weight: bold;
+            color: #1976D2;
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 20px;
+            padding: 10px;
+            border: 2px dashed #1976D2;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .result-area {
+            font-size: 50px;
+            margin-top: 30px;
+            height: 80px;
+            color: #388E3C;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            background: #FF9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sun"></div>
+
+    <div class="game-container">
+        <h1>✨ 0 нэмэх ид шид ✨</h1>
+        <p>Тооны ард 0-ийг тавихад ямар тоо болохыг хараарай!</p>
+        
+        <div id="problem">
+            <span class="magic-number" id="num">5</span>
+            <span class="magic-zero" id="zero" draggable="true">0</span>
+        </div>
+
+        <div class="result-area" id="result-text">
+            ? x 10 = <span id="answer">...</span>
+        </div>
+
+        <button class="btn" onclick="nextNum()">Дараагийн тоо</button>
+    </div>
+
+    <script>
+        const numElem = document.getElementById('num');
+        const zeroElem = document.getElementById('zero');
+        const answerElem = document.getElementById('answer');
+        let currentNum = 5;
+
+        // 0-ийг дарахад эсвэл чирэхэд үйлдэл хийх
+        zeroElem.onclick = function() {
+            let result = currentNum * 10;
+            numElem.innerText = result; // 0 залгагдаж буй мэт харагдуулна
+            answerElem.innerText = result;
+            zeroElem.style.display = 'none'; // 0 нь тоондоо "шингэчихэж" байгаа мэт
+            alert("Ид шид! " + currentNum + " тоо 10 дахин томорч " + result + " боллоо!");
+        };
+
+        function nextNum() {
+            currentNum = Math.floor(Math.random() * 9) + 1;
+            numElem.innerText = currentNum;
+            answerElem.innerText = "...";
+            zeroElem.style.display = 'inline-block';
+        }
+    </script>
+</body>
+</html>
