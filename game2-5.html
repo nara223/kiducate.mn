@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
     <meta charset="UTF-8">
-    <title>5-ын хүрд - Бэлчээр</title>
+    <title>5-ын хүрд - Солонгон ишгүүд</title>
     <link rel="stylesheet" href="style.css">
     <style>
         body { margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; background: #87CEEB; }
@@ -83,4 +83,53 @@
 
     // Бэлчээрт байгаа 10 багц ишиг үүсгэх
     function initWildIshig() {
-        for (let i = 1; i <= 10; i++)
+        for (let i = 1; i <= 10; i++) {
+            const group = document.createElement('div');
+            group.className = 'ishig-group-wild';
+            group.id = `group-${i}`;
+            
+            // Баруун талд товчлуурын ойролцоо байрлуулах
+            group.style.right = "160px";
+            group.style.top = (10 + i * 7) + "vh";
+
+            for (let j = 0; j < 5; j++) {
+                const img = document.createElement('img');
+                img.src = 'images/ishig.png'; // Шинэ зураг
+                img.className = 'ishig-img';
+                // Өнгө бүрийг солонго шиг өөрчлөх
+                img.style.filter = `hue-rotate(${i * 36}deg)`;
+                group.appendChild(img);
+            }
+            meadow.appendChild(group);
+        }
+    }
+
+    function nextStep() {
+        if (currentStep < 10) {
+            currentStep++;
+            const group = document.getElementById(`group-${currentStep}`);
+            
+            // Хашаа руу нүүх
+            const fenceRect = fence.getBoundingClientRect();
+            const row = Math.floor((currentStep - 1) / 3);
+            const col = (currentStep - 1) % 3;
+            
+            group.style.left = (fenceRect.left + 30 + col * 130) + "px";
+            group.style.top = (fenceRect.top + 30 + row * 85) + "px";
+            group.style.right = "auto"; // Right утгыг цуцлах
+
+            // Самбар шинэчлэх
+            board.innerText = `${currentStep} x 5 = ${currentStep * 5}`;
+
+            if (currentStep === 10) {
+                addBtn.disabled = true;
+                addBtn.innerText = "Дууслаа!";
+            }
+        }
+    }
+
+    initWildIshig();
+</script>
+
+</body>
+</html>
