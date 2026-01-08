@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>5-ын хүрд - Солонгон ишиг</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f1f8e9; text-align: center; margin: 0; }
         .nav-menu { position: fixed; top: 10px; left: 10px; display: flex; gap: 10px; z-index: 1000; }
@@ -32,7 +33,11 @@
     </style>
 </head>
 <body>
-
+<div class="nav-menu">
+    <button class="nav-btn" onclick="location.href='index.html'">🏠 Нүүр</button>
+    <button class="nav-btn" onclick="location.href='kids.html'">👧 Хүүхэд</button>
+    <button class="nav-btn" onclick="location.href='math-levels.html'">🏫 Анги</button>
+</div>
 <div class="nav-menu">
     <button class="nav-btn" onclick="location.href='index.html'"><img src="images/lamb-icon.png" style="width:20px; margin-right:5px;"> Нүүр</button>
     <button class="nav-btn" onclick="location.href='kids.html'"><img src="images/child.png" style="width:20px; margin-right:5px;"> Хүүхэд</button>
