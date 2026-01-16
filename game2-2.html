@@ -55,22 +55,42 @@ function create() {
 
 function spawnWave() {
     if (isGameOver) return;
+    
+    // 1. Асуултаа үүсгэх
     let a = Phaser.Math.Between(2, 5);
     let b = Phaser.Math.Between(1, 9);
     targetNumber = a * b;
     targetText.setText(`${a} x ${b} = ?`);
 
+    // 2. Зөв хариулт аль солир дээр очихыг санамсаргүйгээр сонгоно
     let correctIdx = Phaser.Math.Between(0, 2);
+
     for(let i = 0; i < 3; i++) {
         let xPos = (window.innerWidth / 4) * (i + 1);
-        let val = (i === correctIdx) ? targetNumber : Phaser.Math.Between(2, 50);
-        if (val === targetNumber && i !== correctIdx) val += 1;
-
+        
+        // 3. Зөв хариулт мөн эсэхийг шийдэх
+        let val;
+        if (i === correctIdx) {
+            val = targetNumber; // Заавал зөв хариултыг тавих
+        } else {
+            val = Phaser.Math.Between(2, 50); // Бусад дээр нь санамсаргүй тоо
+            if (val === targetNumber) val += 2; // Хэрэв санамсаргүйгээр зөв тоо гарчихвал өөрчлөх
+        }
+        
+        // 4. Солир үүсгэх (Бүгд ижилхэн Tint, ижилхэн Scale)
         let enemy = enemies.create(xPos, -100, 'ship').setAngle(180).setScale(3).setTint(0xff6666);
-        enemy.setVelocityY(80);
+        enemy.setVelocityY(80); 
         enemy.setData('val', val);
         
-        let txt = this.add.text(xPos, -100, val, { fontSize: '60px', fill: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+        // 5. Тоог нь дээр нь тавих
+        let txt = this.add.text(xPos, -100, val, { 
+            fontSize: '60px', 
+            fill: '#ffffff', 
+            fontStyle: 'bold', 
+            stroke: '#000', 
+            strokeThickness: 6 
+        }).setOrigin(0.5);
+        
         enemy.setData('txt', txt);
     }
 }
@@ -99,10 +119,15 @@ function shootBullet() {
     });
 }
 
-function resetWave() {
-    enemies.children.iterate(e => { if(e && e.getData('txt')) e.getData('txt').destroy(); });
-    enemies.clear(true, true);
-    spawnWave.call(this);
+    function resetWave() {
+    // Дэлгэц дээрх бүх текст болон солируудыг бүрэн устгана
+    enemies.children.iterate(e => {
+        if (e && e.getData('txt')) {
+            e.getData('txt').destroy();
+        }
+    });
+    enemies.clear(true, true); // Солируудыг бүгдийг нь арилгах
+    spawnWave.call(this); // Шинэ үеийг эхлүүлэх
 }
 
 function winGame() {
