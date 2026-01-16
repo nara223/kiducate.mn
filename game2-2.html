@@ -165,7 +165,7 @@ function winGame() {
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
     // 3. ӨМНӨХ ЦЭС РҮҮ БУЦАХ ТОВЧЛУУР
-    const menuBtn = this.add.text(window.innerWidth/2, window.innerHeight/2 + 100, 'img src="images/kid.png"', { 
+    const menuBtn = this.add.text(window.innerWidth/2, window.innerHeight/2 + 100, 'images/kid.png', { 
         fontSize: '40px', fill: '#ffffff', backgroundColor: '#222', padding: { x: 20, y: 10 }
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
@@ -178,7 +178,7 @@ function winGame() {
 
     // Үндсэн цэс рүү буцахад (Таны сайтын нүүр хуудас):
     menuBtn.on('pointerdown', () => {
-        window.location.href = 'https://kiducate.mn/grade2.html'; // Энд өөрийн үндсэн сайтын линкийг бичнэ
+        window.location.href = 'grade2.html'; // Энд өөрийн үндсэн сайтын линкийг бичнэ
     });
 
     // Товчлуур дээр хулгана очиход томрох эффект
