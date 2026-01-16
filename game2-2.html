@@ -127,5 +127,109 @@ function resetWave() {
     spawnWave.call(this);
 }
 </script>
+    // Тохиргоо хэсэгт тоглоомын хэмжээг дэлгэцэнд тааруулж томосгох
+const config = {
+    type: Phaser.AUTO,
+    width: window.innerWidth, // Дэлгэцийн өргөнөөр
+    height: window.innerHeight, // Дэлгэцийн өндрөөр
+    physics: { default: 'arcade' },
+    scene: { preload: preload, create: create, update: update }
+};
+
+let isGameOver = false;
+
+function preload() {
+    this.load.image('ship', 'https://labs.phaser.io/assets/sprites/fmship.png');
+    this.load.image('bullet', 'https://labs.phaser.io/assets/sprites/bullets/bullet6.png');
+    this.load.image('particle', 'https://labs.phaser.io/assets/particles/yellow.png');
+    
+    // Дуунууд ачаалах
+    this.load.audio('shoot', 'https://labs.phaser.io/assets/audio/SoundEffects/pistol.wav');
+    this.load.audio('explod', 'https://labs.phaser.io/assets/audio/SoundEffects/explosion.mp3');
+    this.load.audio('win', 'https://labs.phaser.io/assets/audio/SoundEffects/mario_fireball.wav');
+}
+
+function create() {
+    if (isGameOver) return;
+
+    // 1. Хөлгийг маш том болгох
+    player = this.physics.add.image(window.innerWidth/2, window.innerHeight - 100, 'ship').setScale(2);
+    player.setCollideWorldBounds(true);
+
+    enemies = this.physics.add.group();
+    bullets = this.physics.add.group();
+
+    // 2. Онооны зорилго
+    scoreText = this.add.text(30, 30, 'Оноо: 0 / 100', { fontSize: '32px', fill: '#fff' });
+    targetText = this.add.text(window.innerWidth/2, 100, '', { 
+        fontSize: '64px', fill: '#ffff00', fontStyle: 'bold' 
+    }).setOrigin(0.5);
+
+    spawnWave.call(this);
+
+    this.input.on('pointerdown', () => {
+        if (!isGameOver) {
+            shoot.call(this);
+            this.sound.play('shoot', { volume: 0.5 }); // Буудах дуу
+        } else {
+            location.reload(); // Тоглоом дууссан бол дахин эхлүүлэх
+        }
+    });
+}
+
+function spawnWave() {
+    let a = Phaser.Math.Between(2, 5); // Бага насны хүүхдэд бага тоо
+    let b = Phaser.Math.Between(1, 10);
+    targetNumber = a * b;
+    targetText.setText(`${a} x ${b} = ?`);
+
+    for(let i = 0; i < 3; i++) {
+        let xPos = (window.innerWidth / 4) * (i + 1);
+        let val = (i === Phaser.Math.Between(0, 2)) ? targetNumber : Phaser.Math.Between(1, 50);
+        
+        // Солирыг маш том болгох (setScale(3))
+        let enemy = enemies.create(xPos, -100, 'ship').setAngle(180).setScale(2.5).setTint(0xff5555);
+        enemy.setVelocityY(80); // Улам удаан, оноход амархан
+        enemy.setData('val', val);
+        
+        // Тоон дээр хүрээ нэмж тод болгох
+        let txt = this.add.text(xPos, -100, val, { 
+            fontSize: '48px', fill: '#ffffff', fontStyle: 'bold', stroke: '#000', strokeThickness: 5 
+        }).setOrigin(0.5);
+        enemy.setData('txt', txt);
+    }
+}
+
+function shoot() {
+    let bullet = bullets.create(player.x, player.y - 50, 'bullet').setScale(2); // Сумыг томруулах
+    bullet.setVelocityY(-600);
+
+    this.physics.add.overlap(bullet, enemies, (b, e) => {
+        if (e.getData('val') === targetNumber) {
+            this.sound.play('explod'); // Дэлбэрэх дуу
+            score += 10;
+            scoreText.setText('Оноо: ' + score + ' / 100');
+            
+            if (score >= 100) {
+                winGame.call(this);
+            } else {
+                resetWave.call(this);
+            }
+        }
+        b.destroy();
+    });
+}
+
+function winGame() {
+    isGameOver = true;
+    this.sound.play('win');
+    enemies.clear(true, true);
+    this.add.text(window.innerWidth/2, window.innerHeight/2, 'БАЯР ХҮРГЭЕ!\nТА ЯЛЛАА!', { 
+        fontSize: '80px', fill: '#00ff00', align: 'center', fontStyle: 'bold' 
+    }).setOrigin(0.5);
+    this.add.text(window.innerWidth/2, window.innerHeight/2 + 150, 'Дахин тоглох бол дэлгэц дээр дарна уу', { 
+        fontSize: '24px', fill: '#fff' 
+    }).setOrigin(0.5);
+}
 </body>
 </html>
