@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
+    <meta charset="UTF-8">
+    <title>Math Space Shooter</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
-    <style> body { margin: 0; overflow: hidden; background: #000; } </style>
+    <style>
+        body { margin: 0; background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        canvas { box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); border: 2px solid #333; }
+    </style>
 </head>
 <body>
 <script>
@@ -10,104 +15,116 @@ const config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
-    physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
+    physics: { default: 'arcade', arcade: { debug: false } },
     scene: { preload: preload, create: create, update: update }
 };
 
-let player, enemies, targetNumber, targetText, score = 0, scoreText;
+let player, enemies, bullets, targetNumber, targetText, score = 0, scoreText;
+let emitter; // Дэлбэрэлтийн эффект
+
 const game = new Phaser.Game(config);
 
 function preload() {
-    // Энд зурагнуудаа вэбээс түр авч байна (Та дараа нь өөрийнхөөрөө сольж болно)
-    this.load.image('ship', 'https://labs.phaser.io/assets/sprites/ship.png');
-    this.load.image('bullet', 'https://labs.phaser.io/assets/sprites/bullets/bullet1.png');
+    // Зураг ачаалах (Орчин үеийн неон загвартай)
+    this.load.image('ship', 'https://labs.phaser.io/assets/sprites/fmship.png');
+    this.load.image('bullet', 'https://labs.phaser.io/assets/sprites/bullets/bullet6.png');
+    this.load.image('particle', 'https://labs.phaser.io/assets/particles/blue.png');
 }
 
 function create() {
-    // 1. Тоглогч
-    player = this.physics.add.image(400, 500, 'ship');
+    // 1. Арын дэвсгэр (Оддын эффект)
+    this.add.stars = this.add.blitter(0, 0, 'particle');
+    
+    // 2. Тоглогч
+    player = this.physics.add.image(400, 550, 'ship').setScale(0.8);
     player.setCollideWorldBounds(true);
 
-    // 2. Дайснууд (Солирнууд)
+    // 3. Бүлгүүд
     enemies = this.physics.add.group();
+    bullets = this.physics.add.group();
 
-    // 3. Зорилтот тоог үүсгэх
-    generateNewQuestion();
-
-    // 4. Текстүүд
-    targetText = this.add.text(20, 20, '', { fontSize: '32px', fill: '#00ff00', fontWeight: 'bold' });
-    scoreText = this.add.text(650, 20, 'Score: 0', { fontSize: '24px', fill: '#fff' });
-
-    // 5. 2 секунд тутамд шинэ солир унана
-    this.time.addEvent({ delay: 2000, callback: spawnEnemy, callbackScope: this, loop: true });
-
-    // Хулганаар буудах
-    this.input.on('pointerdown', (pointer) => {
-        shootBullet.call(this, pointer);
+    // 4. Дэлбэрэлтийн эффект бэлдэх
+    emitter = this.add.particles(0, 0, 'particle', {
+        speed: { min: -150, max: 150 },
+        scale: { start: 0.1, end: 0 },
+        lifespan: 600,
+        emitting: false
     });
+
+    // 5. Текстүүд
+    targetText = this.add.text(400, 50, '', { 
+        fontSize: '48px', fill: '#00ffcc', fontStyle: 'bold', stroke: '#000', strokeThickness: 6 
+    }).setOrigin(0.5);
+    
+    scoreText = this.add.text(20, 20, 'Score: 0', { fontSize: '24px', fill: '#fff' });
+
+    // Эхний асуулт
+    spawnWave.call(this);
+
+    // Буудах (Click)
+    this.input.on('pointerdown', () => shoot.call(this));
 }
 
-function spawnEnemy() {
-    let x = Phaser.Math.Between(50, 750);
-    let enemy = enemies.create(x, -50, null); // Зураггүй дөрвөлжин түр үүсгэв
-    
-    // Санамсаргүй хүрдний жишээ үүсгэх
+function spawnWave() {
+    // Дэлгэц дээр 3 солир гаргана
+    let correctIdx = Phaser.Math.Between(0, 2);
     let a = Phaser.Math.Between(2, 9);
     let b = Phaser.Math.Between(2, 9);
-    let result = a * b;
-    
-    enemy.setData('answer', result);
-    enemy.setVelocityY(100); // Доошоо унах хурд
+    targetNumber = a * b;
+    targetText.setText(`${a} x ${b} = ?`);
 
-    // Солир дээрх бичиг
-    let txt = this.add.text(x - 20, -60, `${a}x${b}`, { fontSize: '22px', fill: '#ffcc00' });
-    enemy.setData('text', txt);
-}
-
-function generateNewQuestion() {
-    targetNumber = Phaser.Math.Between(4, 81); // Түр зуур санамсаргүй тоо (Яг хүрдний хариу байхаар тохируулж болно)
-    // Энгийн байлгах үүднээс дэлгэц дээрх солирнуудын нэгнийх нь хариуг сонгох ложик нэмж болно
+    for(let i = 0; i < 3; i++) {
+        let x = 200 + (i * 200);
+        let val = (i === correctIdx) ? targetNumber : Phaser.Math.Between(4, 81);
+        
+        let enemy = enemies.create(x, -50, 'ship').setAngle(180).setTint(0xff0000);
+        enemy.setVelocityY(Phaser.Math.Between(50, 100));
+        enemy.setData('val', val);
+        
+        let txt = this.add.text(x, -50, val, { fontSize: '28px', fill: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+        enemy.setData('txt', txt);
+    }
 }
 
 function update() {
-    // Солирны текстийг солиртой хамт хөдөлгөх
+    player.x = Phaser.Math.Linear(player.x, this.input.x, 0.1);
+
     enemies.children.iterate(enemy => {
         if (enemy) {
-            enemy.getData('text').setPosition(enemy.x - 20, enemy.y);
-            if (enemy.y > 600) { 
-                enemy.getData('text').destroy();
-                enemy.destroy(); 
+            enemy.getData('txt').setPosition(enemy.x, enemy.y);
+            if (enemy.y > 600) {
+                resetWave.call(this);
             }
         }
     });
-
-    // Хөлөг хулганыг дагах
-    player.x = Phaser.Math.Linear(player.x, this.input.x, 0.2);
-    targetText.setText('БУУДАХ ТОО: ' + targetNumber);
 }
 
-function shootBullet(pointer) {
-    let bullet = this.physics.add.image(player.x, player.y, 'bullet');
-    bullet.setVelocityY(-400);
+function shoot() {
+    let bullet = bullets.create(player.x, player.y - 20, 'bullet');
+    bullet.setVelocityY(-500);
 
     this.physics.add.overlap(bullet, enemies, (b, e) => {
-        if (e.getData('answer') === targetNumber) {
-            // ЗӨВ БУУДВАЛ
-            e.getData('text').destroy();
-            e.destroy();
-            b.destroy();
+        if (e.getData('val') === targetNumber) {
+            // ЗӨВ
+            emitter.emitParticleAt(e.x, e.y, 20);
+            this.cameras.main.shake(100, 0.01);
             score += 10;
             scoreText.setText('Score: ' + score);
-            
-            // Дэлбэрэлтийн эффект (Flash)
-            this.cameras.main.flash(200, 0, 255, 0); 
-            generateNewQuestion();
+            resetWave.call(this);
         } else {
-            // БУРУУ БУУДВАЛ
-            b.destroy();
-            this.cameras.main.shake(200, 0.01); // Дэлгэц чичрэх
+            // БУРУУ
+            this.cameras.main.flash(200, 150, 0, 0);
+            score = Math.max(0, score - 5);
+            scoreText.setText('Score: ' + score);
         }
+        b.destroy();
     });
+}
+
+function resetWave() {
+    enemies.children.iterate(e => { if(e) e.getData('txt').destroy(); });
+    enemies.clear(true, true);
+    spawnWave.call(this);
 }
 </script>
 </body>
