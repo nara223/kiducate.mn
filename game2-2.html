@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Хүрдний Сансрын Тулаан</title>
+    <title>Math Space Game</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         body { margin: 0; background: #000; overflow: hidden; }
-        canvas { display: block; }
     </style>
 </head>
 <body>
@@ -25,25 +24,23 @@ let isGameOver = false;
 const game = new Phaser.Game(config);
 
 function preload() {
-    // Зураг ачаалах
+    // Үндсэн дүрсүүд (Эдгээр линкүүд заавал ажиллах ёстой)
     this.load.image('ship', 'https://labs.phaser.io/assets/sprites/fmship.png');
     this.load.image('bullet', 'https://labs.phaser.io/assets/sprites/bullets/bullet6.png');
-    this.load.image('star', 'https://labs.phaser.io/assets/particles/blue.png');
     
-    // Дуу ачаалах
-    this.load.audio('shoot', 'https://labs.phaser.io/assets/audio/SoundEffects/pistol.wav');
-    this.load.audio('explod', 'https://labs.phaser.io/assets/audio/SoundEffects/explosion.mp3');
+    // ТАНЫ ГИТХАБ ДЭЭРХ ЗУРГУУД
+    // Хэрэв assets хавтсанд байгаа бол замыг нь шалгаарай (Жишээ: 'assets/home.png')
+    this.load.image('homeBtn', 'home.png'); 
+    this.load.image('restartBtn', 'restart.png');
 }
 
 function create() {
-    // 1. Тоглогч (Маш том болгосон)
     player = this.physics.add.image(window.innerWidth/2, window.innerHeight - 100, 'ship').setScale(2.5);
     player.setCollideWorldBounds(true);
 
     enemies = this.physics.add.group();
     bullets = this.physics.add.group();
 
-    // 2. Бичиг болон Текст
     scoreText = this.add.text(40, 40, 'Оноо: 0 / 100', { fontSize: '40px', fill: '#fff', fontStyle: 'bold' });
     targetText = this.add.text(window.innerWidth/2, 100, '', { 
         fontSize: '80px', fill: '#00ffcc', fontStyle: 'bold', stroke: '#000', strokeThickness: 8 
@@ -51,55 +48,29 @@ function create() {
 
     spawnWave.call(this);
 
-    // Удирдах
     this.input.on('pointerdown', () => {
-        if (!isGameOver) {
-            shootBullet.call(this);
-            this.sound.play('shoot', { volume: 0.3 });
-        } else {
-            location.reload();
-        }
+        if (!isGameOver) shootBullet.call(this);
     });
 }
 
 function spawnWave() {
     if (isGameOver) return;
-    
-    // 1. Асуултаа үүсгэх
     let a = Phaser.Math.Between(2, 5);
     let b = Phaser.Math.Between(1, 9);
     targetNumber = a * b;
     targetText.setText(`${a} x ${b} = ?`);
 
-    // 2. Зөв хариулт аль солир дээр очихыг санамсаргүйгээр сонгоно
     let correctIdx = Phaser.Math.Between(0, 2);
-
     for(let i = 0; i < 3; i++) {
         let xPos = (window.innerWidth / 4) * (i + 1);
-        
-        // 3. Зөв хариулт мөн эсэхийг шийдэх
-        let val;
-        if (i === correctIdx) {
-            val = targetNumber; // Заавал зөв хариултыг тавих
-        } else {
-            val = Phaser.Math.Between(2, 50); // Бусад дээр нь санамсаргүй тоо
-            if (val === targetNumber) val += 2; // Хэрэв санамсаргүйгээр зөв тоо гарчихвал өөрчлөх
-        }
-        
-        // 4. Солир үүсгэх (Бүгд ижилхэн Tint, ижилхэн Scale)
+        let val = (i === correctIdx) ? targetNumber : Phaser.Math.Between(2, 50);
+        if (val === targetNumber && i !== correctIdx) val += 1;
+
         let enemy = enemies.create(xPos, -100, 'ship').setAngle(180).setScale(3).setTint(0xff6666);
-        enemy.setVelocityY(80); 
+        enemy.setVelocityY(80);
         enemy.setData('val', val);
         
-        // 5. Тоог нь дээр нь тавих
-        let txt = this.add.text(xPos, -100, val, { 
-            fontSize: '60px', 
-            fill: '#ffffff', 
-            fontStyle: 'bold', 
-            stroke: '#000', 
-            strokeThickness: 6 
-        }).setOrigin(0.5);
-        
+        let txt = this.add.text(xPos, -100, val, { fontSize: '60px', fill: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
         enemy.setData('txt', txt);
     }
 }
@@ -107,13 +78,10 @@ function spawnWave() {
 function update() {
     if (isGameOver) return;
     player.x = Phaser.Math.Linear(player.x, this.input.x, 0.1);
-
     enemies.children.iterate(enemy => {
         if (enemy) {
             enemy.getData('txt').setPosition(enemy.x, enemy.y);
-            if (enemy.y > window.innerHeight) {
-                resetWave.call(this);
-            }
+            if (enemy.y > window.innerHeight) resetWave.call(this);
         }
     });
 }
@@ -121,69 +89,37 @@ function update() {
 function shootBullet() {
     let bullet = bullets.create(player.x, player.y - 60, 'bullet').setScale(3);
     bullet.setVelocityY(-700);
-
     this.physics.add.overlap(bullet, enemies, (b, e) => {
         if (e.getData('val') === targetNumber) {
-            this.sound.play('explod', { volume: 0.5 });
-            this.cameras.main.shake(100, 0.01);
             score += 10;
             scoreText.setText('Оноо: ' + score + ' / 100');
-            
-            if (score >= 100) {
-                winGame.call(this);
-            } else {
-                resetWave.call(this);
-            }
+            if (score >= 100) winGame.call(this); else resetWave.call(this);
         }
         b.destroy();
     });
 }
 
 function resetWave() {
-    // Дэлгэц дээрх бүх текст болон солируудыг бүрэн устгана
-    enemies.children.iterate(e => {
-        if (e && e.getData('txt')) {
-            e.getData('txt').destroy();
-        }
-    });
-    enemies.clear(true, true); // Солируудыг бүгдийг нь арилгах
-    spawnWave.call(this); // Шинэ үеийг эхлүүлэх
+    enemies.children.iterate(e => { if(e && e.getData('txt')) e.getData('txt').destroy(); });
+    enemies.clear(true, true);
+    spawnWave.call(this);
 }
 
 function winGame() {
     isGameOver = true;
     enemies.clear(true, true);
     
-    // 1. БАЯР ХҮРГЭЕ текст
-    this.add.text(window.innerWidth/2, window.innerHeight/2 - 200, 'БАЯР ХҮРГЭЕ!', { 
-        fontSize: '80px', fill: '#ffff00', fontStyle: 'bold' 
-    }).setOrigin(0.5);
+    this.add.text(window.innerWidth/2, window.innerHeight/2 - 200, 'ЯЛЛАА!', { fontSize: '100px', fill: '#ffff00' }).setOrigin(0.5);
 
-    // 2. ҮНДЭС ЦЭС - Зураг ашиглах
-    const menuBtn = this.add.image(window.innerWidth/2, window.innerHeight/2 + 50, 'homeBtn')
-        .setScale(0.5) // Зургийн хэмжээг эндээс тохируулна
-        .setInteractive({ useHandCursor: true });
+    // ЗУРГАН ТОВЧЛУУР (Хэрэв зураг байхгүй бол текст гарна)
+    const menuBtn = this.add.image(window.innerWidth/2, window.innerHeight/2, 'homeBtn')
+        .setScale(0.5).setInteractive({ useHandCursor: true });
+    
+    const restartBtn = this.add.image(window.innerWidth/2, window.innerHeight/2 + 150, 'restartBtn')
+        .setScale(0.5).setInteractive({ useHandCursor: true });
 
-    // 3. ДАХИН ТОГЛОХ - Зураг ашиглах
-    const restartBtn = this.add.image(window.innerWidth/2, window.innerHeight/2 + 180, 'restartBtn')
-        .setScale(0.5)
-        .setInteractive({ useHandCursor: true });
-
-    // --- Үйлдэл нэмэх ---
-    menuBtn.on('pointerdown', () => {
-        window.location.href = 'grade2.html'; // Үндсэн хуудас руу буцах
-    });
-
-    restartBtn.on('pointerdown', () => {
-        location.reload(); // Тоглоомыг дахин эхлүүлэх
-    });
-
-    // Хулгана очиход бага зэрэг томорч мэдэгддэг эффект
-    [menuBtn, restartBtn].forEach(btn => {
-        btn.on('pointerover', () => btn.setScale(0.55));
-        btn.on('pointerout', () => btn.setScale(0.5));
-    });
-}
+    menuBtn.on('pointerdown', () => window.location.href = 'index.html');
+    restartBtn.on('pointerdown', () => location.reload());
 }
 </script>
 </body>
