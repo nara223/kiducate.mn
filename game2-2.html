@@ -154,38 +154,36 @@ function winGame() {
     isGameOver = true;
     enemies.clear(true, true);
     
-    // 1. "БАЯР ХҮРГЭЕ" текст
-    this.add.text(window.innerWidth/2, window.innerHeight/2 - 150, 'БАЯР ХҮРГЭЕ!', { 
-        fontSize: '80px', fill: '#ffff00', fontStyle: 'bold', stroke: '#000', strokeThickness: 10 
+    // 1. БАЯР ХҮРГЭЕ текст
+    this.add.text(window.innerWidth/2, window.innerHeight/2 - 200, 'БАЯР ХҮРГЭЕ!', { 
+        fontSize: '80px', fill: '#ffff00', fontStyle: 'bold' 
     }).setOrigin(0.5);
 
-    // 2. ДАХИН ТОГЛОХ ТОВЧЛУУР
-    const restartBtn = this.add.text(window.innerWidth/2, window.innerHeight/2, '🔄', { 
-        fontSize: '40px', fill: '#00ff00', backgroundColor: '#222', padding: { x: 20, y: 10 }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    // 2. ҮНДЭС ЦЭС - Зураг ашиглах
+    const menuBtn = this.add.image(window.innerWidth/2, window.innerHeight/2 + 50, 'kid.png')
+        .setScale(0.5) // Зургийн хэмжээг эндээс тохируулна
+        .setInteractive({ useHandCursor: true });
 
-    // 3. ӨМНӨХ ЦЭС РҮҮ БУЦАХ ТОВЧЛУУР
-    const menuBtn = this.add.text(window.innerWidth/2, window.innerHeight/2 + 100, 'images/kid.png', { 
-        fontSize: '40px', fill: '#ffffff', backgroundColor: '#222', padding: { x: 20, y: 10 }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    // 3. ДАХИН ТОГЛОХ - Зураг ашиглах
+    const restartBtn = this.add.image(window.innerWidth/2, window.innerHeight/2 + 180, 'restartBtn')
+        .setScale(0.5)
+        .setInteractive({ useHandCursor: true });
 
-    // --- Товчлууруудын үйлдэл ---
-
-    // Дахин тоглох дарахад:
-    restartBtn.on('pointerdown', () => {
-        location.reload(); 
-    });
-
-    // Үндсэн цэс рүү буцахад (Таны сайтын нүүр хуудас):
+    // --- Үйлдэл нэмэх ---
     menuBtn.on('pointerdown', () => {
-        window.location.href = 'grade2.html'; // Энд өөрийн үндсэн сайтын линкийг бичнэ
+        window.location.href = 'grade2.html'; // Үндсэн хуудас руу буцах
     });
 
-    // Товчлуур дээр хулгана очиход томрох эффект
-    [restartBtn, menuBtn].forEach(btn => {
-        btn.on('pointerover', () => btn.setScale(1.1).setTint(0x00ffcc));
-        btn.on('pointerout', () => btn.setScale(1).clearTint());
+    restartBtn.on('pointerdown', () => {
+        location.reload(); // Тоглоомыг дахин эхлүүлэх
     });
+
+    // Хулгана очиход бага зэрэг томорч мэдэгддэг эффект
+    [menuBtn, restartBtn].forEach(btn => {
+        btn.on('pointerover', () => btn.setScale(0.55));
+        btn.on('pointerout', () => btn.setScale(0.5));
+    });
+}
 }
 </script>
 </body>
